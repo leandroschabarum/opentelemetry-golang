@@ -6,6 +6,7 @@ import (
 	"log/slog"
 	"os"
 	"strings"
+	"time"
 
 	"go.opentelemetry.io/contrib/bridges/otelslog"
 	"go.opentelemetry.io/otel"
@@ -89,6 +90,12 @@ func New(ctx context.Context, service string, opts ...Option) (*OpenTelemetry, e
 }
 
 func (o *OpenTelemetry) Shutdown(ctx context.Context) error {
+	if ctx.Err() != nil {
+		var cancel context.CancelFunc
+		ctx, cancel = context.WithTimeout(context.Background(), 10*time.Second)
+		defer cancel()
+	}
+
 	var errs []error
 
 	if o.TracerProvider != nil {
