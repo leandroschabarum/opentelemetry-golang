@@ -48,9 +48,9 @@ func main() {
 	)
 
 	o, _ := opentelemetry.New(ctx, "my-app:1.0.0",
-		otellgtm.WithSpanExporters(traceExporter),
-		otellgtm.WithMetricExporters(metricExporter),
-		otellgtm.WithLogExporters(logExporter),
+		opentelemetry.WithSpanExporters(traceExporter),
+		opentelemetry.WithMetricExporters(metricExporter),
+		opentelemetry.WithLogExporters(logExporter),
 	)
 
 	defer func() {
