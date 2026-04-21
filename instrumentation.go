@@ -4,6 +4,7 @@ import (
 	"context"
 	"errors"
 	"log/slog"
+	"os"
 	"strings"
 
 	"go.opentelemetry.io/contrib/bridges/otelslog"
@@ -76,8 +77,9 @@ func New(ctx context.Context, service string, opts ...Option) (*OpenTelemetry, e
 	}
 
 	lp := log.NewLoggerProvider(lpOpts...)
-	slogHandler := otelslog.NewHandler(name, otelslog.WithLoggerProvider(lp))
-	slog.SetDefault(slog.New(slogHandler))
+	otelHandler := otelslog.NewHandler(name, otelslog.WithLoggerProvider(lp))
+	stdoutHandler := slog.NewTextHandler(os.Stdout, &slog.HandlerOptions{Level: slog.LevelDebug})
+	slog.SetDefault(slog.New(createLogger(stdoutHandler, otelHandler)))
 
 	return &OpenTelemetry{
 		TracerProvider: tp,
