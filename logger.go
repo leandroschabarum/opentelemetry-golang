@@ -26,9 +26,7 @@ func (t *transports) Handle(ctx context.Context, record slog.Record) error {
 	}
 
 	if t.otel.Enabled(ctx, record.Level) {
-		if err := t.otel.Handle(ctx, record); err != nil {
-			return err
-		}
+		_ = t.otel.Handle(ctx, record)
 	}
 
 	return nil
