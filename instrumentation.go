@@ -4,6 +4,7 @@ import (
 	"context"
 	"errors"
 	"log/slog"
+	"net"
 	"os"
 	"strings"
 	"time"
@@ -49,6 +50,15 @@ func New(ctx context.Context, service string, opts ...Option) (*OpenTelemetry, e
 		propagation.TraceContext{},
 		propagation.Baggage{},
 	))
+
+	otel.SetErrorHandler(otel.ErrorHandlerFunc(func(err error) {
+		var netErr *net.OpError
+		if errors.As(err, &netErr) {
+			return
+		}
+
+		slog.Error(err.Error())
+	}))
 
 	// Tracer provider
 	tpOpts := []trace.TracerProviderOption{trace.WithResource(resources)}
