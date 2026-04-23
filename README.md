@@ -52,12 +52,7 @@ func main() {
 		opentelemetry.WithMetricExporters(metricExporter),
 		opentelemetry.WithLogExporters(logExporter),
 	)
-
-	defer func() {
-		shutdownCtx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
-		defer cancel()
-		o.Shutdown(shutdownCtx)
-	}()
+	defer o.Shutdown(ctx)
 
 	// Use the global tracer and slog as usual
 	tracer := otel.Tracer("my-app")
